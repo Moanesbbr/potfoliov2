@@ -1,0 +1,26 @@
+# Append to tunispare-deploy/k3s/ingress/ingress.yaml (after a `---` line).
+#
+# Only the http → https redirect is taken from the shared middlewares. The
+# shared `security-headers` middleware is left out on purpose: it would
+# replace the portfolio's own, stricter Content-Security-Policy, which the
+# nginx in the image already sends with the other security headers.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: portfolio
+  namespace: tunispare
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    traefik.ingress.kubernetes.io/router.middlewares: tunispare-redirect-https@kubernetescrd
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts: [moanesbbr.tunispare.com]
+      secretName: portfolio-tls
+  rules:
+    - host: moanesbbr.tunispare.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend: { service: { name: portfolio, port: { name: http } } }

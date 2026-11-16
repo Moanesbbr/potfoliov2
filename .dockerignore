@@ -1,0 +1,9 @@
+node_modules
+dist
+dist-ssr
+.git
+.github
+assets-src
+deploy
+*.md
+!scripts/llms.template.md

@@ -1,0 +1,110 @@
+@import 'tailwindcss';
+@import '@fontsource/bowlby-one/latin-400.css';
+@import '@fontsource-variable/bricolage-grotesque/wght.css';
+
+@theme {
+  --color-brand: #ec612c;
+  --color-brand-deep: #c94a1c;
+  --color-navy: #0c1a3d;
+  --color-navy-deep: #081230;
+  --color-mint: #9cf07a;
+  --color-sky: #8fd3f4;
+  --color-paper: #f6f3ee;
+  --color-ink: #141416;
+  --font-sans: 'Bricolage Grotesque Variable', system-ui, sans-serif;
+  --font-display: 'Bowlby One', 'Bricolage Grotesque Variable', sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--color-paper);
+  color: var(--color-navy);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+.heading {
+  font-family: var(--font-display);
+  font-weight: 400;
+}
+
+/* ---------- ticker ---------- */
+@keyframes marquee-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee-scroll 45s linear infinite;
+}
+
+/* ---------- hero entrance ---------- */
+@keyframes heroRise {
+  from { opacity: 0; transform: translateY(26px); filter: blur(8px); }
+  to { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+.hero-rise {
+  opacity: 0;
+  animation: heroRise 0.95s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes avatarRise {
+  from { opacity: 0; transform: translateY(8%); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.avatar-rise {
+  opacity: 0;
+  animation: avatarRise 1.2s cubic-bezier(0.22, 1, 0.36, 1) 0.15s forwards;
+}
+
+@keyframes wordIn {
+  from { opacity: 0; transform: translateX(var(--from, -40px)); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.word-in {
+  opacity: 0;
+  animation: wordIn 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* ---------- reveal on scroll ---------- */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1), transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.reveal.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+@keyframes livePulse {
+  0% { box-shadow: 0 0 0 0 rgb(156 240 122 / 0.6); }
+  100% { box-shadow: 0 0 0 10px rgb(156 240 122 / 0); }
+}
+.live-dot {
+  animation: livePulse 1.8s ease-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .marquee-track,
+  .hero-rise,
+  .avatar-rise,
+  .word-in,
+  .live-dot {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
