@@ -21,6 +21,9 @@ npm run preview    # serve dist/ locally
 | Ticker, products (demo film, screenshots), lab, help, worked with, path, stack, links, footer | `src/components/Sections.tsx` |
 | Navigation | `src/components/Nav.tsx` |
 | Public address of the site | `.env` (`VITE_SITE_URL`) |
+| Image and favicon scripts, prerender | `scripts/` |
+| Sources of the images (avatar cutouts, logos, screenshots) | `assets-src/` |
+| Container, nginx, k3s manifests | `Dockerfile`, `nginx/`, `deploy/` |
 
 ## SEO and GEO
 
@@ -37,15 +40,23 @@ npm run preview    # serve dist/ locally
 
 ## Images and video
 
-Run these from `portfolio/` when the avatar changes:
+Run these from the repository root when the avatar changes:
 
 ```bash
-python -I site/scripts/cutout.py "results/<render on flat colour>.webp" site/assets-src/avatar-shirt.png matte
-python -I site/scripts/cutout.py "results/<render on checkerboard>.webp" site/assets-src/avatar-hoodie.png checker
-cd site
+python -I scripts/cutout.py "raw/avatar-renders/<render on flat colour>.webp" assets-src/avatar-shirt.png matte
+python -I scripts/cutout.py "raw/avatar-renders/<render on checkerboard>.webp" assets-src/avatar-hoodie.png checker
 python -I scripts/prepare_assets.py   # avatars, screenshots and logos into public/img (webp)
 python -I scripts/favicons.py         # favicon set from the avatar head
 ```
+
+`raw/` holds the working material and is ignored by git and Docker:
+
+| Folder | What |
+|---|---|
+| `raw/avatar-renders/` | the AI avatar renders that `cutout.py` cuts out |
+| `raw/photos/` | the reference photos the renders were made from |
+| `raw/inspiration/` | screenshots of designs used as inspiration |
+| `raw/prompts/` | the prompts used while designing |
 
 - `public/og.jpg` is the 1200×630 share image (rendered from a small HTML page).
 - `public/video/`: the Tunispare demo film re-encoded for the web from

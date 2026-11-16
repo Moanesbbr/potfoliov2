@@ -14,6 +14,7 @@ export const profile = {
     calendly: 'https://calendly.com/moanesbbr',
   },
   bio: 'Software engineer and founder of Tunispare, based in Tunis. I build products end to end, from the database to the server they run on.',
+  availability: 'Open to work in Tunisia, abroad or remotely.',
 }
 
 export const heroWords = {
@@ -131,7 +132,7 @@ export const products: Product[] = [
       { value: 'CI/CD', label: 'GitHub Actions → GHCR' },
     ],
     stack: ['NestJS', 'MongoDB', 'Next.js', 'Docker', 'Caddy', 'GitHub Actions'],
-    note: 'Delivered to the client. The public site is offline today.',
+    note: 'Delivered to its owner. The public store is offline today.',
     theme: 'orange',
     shots: [
       { src: '/img/malltech-store.webp', alt: 'Malltech storefront home page' },
@@ -156,7 +157,7 @@ export const products: Product[] = [
       { value: '15', label: 'domain models' },
     ],
     stack: ['Laravel', 'PHP', 'MySQL', 'Blade', 'JavaScript'],
-    note: 'Delivered to the client. The public site is offline today.',
+    note: 'Handed over to the boutique. Its online shop is offline today.',
     theme: 'sky',
     shots: [{ src: '/img/achabs-store.webp', alt: 'Achabs Vintage boutique' }],
   },

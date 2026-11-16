@@ -1,6 +1,6 @@
 """Generate the favicon set from the avatar cutout (head on the brand orange).
 
-Usage (from site/): python -I scripts/favicons.py
+Usage (from the repository root): python -I scripts/favicons.py
 """
 import json
 import os

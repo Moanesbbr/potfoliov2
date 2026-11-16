@@ -1,6 +1,6 @@
 """Copy and resize the project visuals into public/img (webp).
 
-Usage (from site/): python -I scripts/prepare_assets.py
+Usage (from the repository root): python -I scripts/prepare_assets.py
 Sources live outside this folder; re-run after changing them.
 """
 import os

@@ -1,6 +1,6 @@
 # Moanes Ben Brahim
 
-> Software engineer and founder of Tunispare, based in Tunis, Tunisia. Builds products end to end: backend APIs, web and mobile apps, and the infrastructure that runs them.
+> Software engineer and founder of Tunispare, based in Tunis, Tunisia. Builds products end to end: backend APIs, web and mobile apps, and the infrastructure that runs them. Open to work in Tunisia, abroad or remotely.
 
 Site: {{SITE}}/
 
@@ -12,7 +12,7 @@ Site: {{SITE}}/
 - Experience: 3+ years shipping to production
 - Education: software engineering degree, TEK-UP University (2023 to 2026); bachelor in information technology, ISET Radès (2019 to 2023)
 - Languages: Arabic (native), English (fluent), French (intermediate)
-- Open to: freelance missions and full-time roles, remote or in Tunis
+- Open to: full-time roles and freelance missions, in Tunisia, abroad or remotely
 
 ## Products
 

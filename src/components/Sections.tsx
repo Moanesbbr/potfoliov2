@@ -128,7 +128,7 @@ function Screens({ p, t }: { p: Product; t: (typeof THEMES)[Theme] }) {
               aria-label="Show the demo film"
               className={`relative overflow-hidden rounded-lg border-2 bg-navy-deep transition ${shot === -1 ? 'border-current' : 'border-transparent opacity-60 hover:opacity-100'} ${t.text}`}
             >
-              <img src={p.video.poster} alt="" loading="lazy" className="aspect-[16/10] w-full object-cover" />
+              <img src={p.video.poster} alt={`${p.name} demo film, opening frame`} loading="lazy" className="aspect-[16/10] w-full object-cover" />
               <span className="absolute inset-0 flex items-center justify-center bg-black/35 text-white">
                 <Play size={18} fill="currentColor" />
               </span>
@@ -142,7 +142,7 @@ function Screens({ p, t }: { p: Product; t: (typeof THEMES)[Theme] }) {
               aria-label={`Show screenshot: ${s.alt}`}
               className={`overflow-hidden rounded-lg border-2 bg-white transition ${i === shot ? 'border-current' : 'border-transparent opacity-60 grayscale hover:opacity-100 hover:grayscale-0'} ${t.text}`}
             >
-              <img src={s.src} alt="" loading="lazy" className="aspect-[16/10] w-full bg-white object-cover object-top" />
+              <img src={s.src} alt={`Thumbnail: ${s.alt}`} loading="lazy" className="aspect-[16/10] w-full bg-white object-cover object-top" />
             </button>
           ))}
         </div>
@@ -347,7 +347,7 @@ export function Help() {
         </div>
         <Reveal className="mt-16 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
           <p className="max-w-xl text-[clamp(1.15rem,2vw,1.4rem)] leading-snug font-bold">
-            Freelance missions or a full-time role. Remote or in Tunis, in English, French or Arabic.
+            A full-time role or a freelance mission, in Tunisia, abroad or remotely. In English, French or Arabic.
           </p>
           <a href={profile.links.calendly} target="_blank" rel="noreferrer" className="inline-flex shrink-0 items-center gap-2 self-start rounded-full bg-navy px-6 py-3 text-[16px] font-bold text-white transition-transform hover:scale-[1.04] sm:self-auto">
             Book a call
@@ -381,7 +381,7 @@ export function WorkedWith() {
           ))}
           <li>
             <Reveal delay={workedWith.length * 40}>
-              <a href={profile.links.calendly} target="_blank" rel="noreferrer" className="flex h-32 items-center justify-center rounded-2xl bg-mint px-3 text-center transition-transform hover:scale-[1.03]">
+              <a href="#contact" className="flex h-32 items-center justify-center rounded-2xl bg-mint px-3 text-center transition-transform hover:scale-[1.03]">
                 <span className="heading text-[1.6rem] leading-[0.95] text-navy">
                   Yours
                   <br />
@@ -421,7 +421,7 @@ export function Path() {
                         </span>
                       )}
                     </p>
-                    <h4 className="mt-2 text-[20px] leading-tight font-extrabold">{s.title}</h4>
+                    <p className="mt-2 text-[20px] leading-tight font-extrabold">{s.title}</p>
                     <p className="text-[15px] font-semibold text-navy/70">{s.role}</p>
                     <p className="mt-2 text-[14px] leading-relaxed text-navy/75">{s.text}</p>
                   </li>
@@ -506,11 +506,9 @@ export function Footer() {
     <footer className="bg-navy-deep text-white/80">
       <div className="flex flex-col gap-3 px-5 py-6 text-[14px] font-medium sm:flex-row sm:items-center sm:justify-between md:px-[4vw]">
         <span>© {new Date().getFullYear()} {profile.name}</span>
-        <span className="flex gap-6">
-          <a href={profile.links.github} target="_blank" rel="noreferrer" className="hover:text-white">GitHub</a>
-          <a href={profile.links.linkedin} target="_blank" rel="noreferrer" className="hover:text-white">LinkedIn</a>
-          <a href="#top" className="hover:text-white">Top ↑</a>
-        </span>
+        <a href="#top" className="hover:text-white">
+          Back to top ↑
+        </a>
         <span>{profile.location}</span>
       </div>
     </footer>

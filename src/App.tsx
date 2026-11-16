@@ -21,11 +21,15 @@ export default function App() {
           avatar="/img/moanes-ben-brahim-3d-avatar.webp"
           avatarAlt="Moanes Ben Brahim, software engineer and founder of Tunispare, as a 3D avatar"
           words={heroWords}
-          bottomLeft={<p>{profile.bio}</p>}
+          bottomLeft={
+            <p>
+              {profile.bio} <strong className="font-bold">{profile.availability}</strong>
+            </p>
+          }
           bottomRight={
             <>
               <PillLink href="#products" variant="solid">See the products</PillLink>
-              <PillLink href="#help" variant="outline">Work with me</PillLink>
+              <PillLink href="#help" variant="outline">Hire me</PillLink>
             </>
           }
         />
@@ -49,7 +53,7 @@ export default function App() {
           bottomLeft={<p>Tell me what you are building and where it is stuck.</p>}
           bottomRight={
             <>
-              <PillLink href={profile.links.calendly} variant="solid">Book a call</PillLink>
+              <PillLink href={profile.links.calendly} variant="solid">Schedule a call</PillLink>
               <PillLink href={`mailto:${profile.email}`} variant="outline">Email me</PillLink>
             </>
           }

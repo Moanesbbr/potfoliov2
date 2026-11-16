@@ -23,6 +23,9 @@ export function StackedTitle({ text, size, colors, drop = false, as: Tag = 'h1',
   ]
   return (
     <div className="relative" style={{ fontSize: size }}>
+      {/* with a label, the heading is that sentence alone (search engines, screen
+          readers); the big wordmark next to it is decoration */}
+      {label && <Tag className="sr-only">{label}</Tag>}
       {layers.map((l, i) => {
         const front = i === layers.length - 1
         const style = {
@@ -30,13 +33,19 @@ export function StackedTitle({ text, size, colors, drop = false, as: Tag = 'h1',
           transform: `translate(${settled ? l.x : 0}em, ${settled ? l.y : 0}em)`,
           transition: drop ? `transform 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) ${(layers.length - 1 - i) * 0.1}s` : undefined,
         }
-        const cls = `${front ? 'relative' : 'absolute inset-0'} heading leading-[0.9] whitespace-nowrap uppercase select-none`
+        // block: every layer must have the same line box, or the stripes drift off the letters
+        const cls = `${front ? 'relative' : 'absolute inset-0'} block heading leading-[0.9] whitespace-nowrap uppercase select-none`
+        if (front && !label) {
+          return (
+            <Tag key={i} className={cls} style={style}>
+              {text}
+            </Tag>
+          )
+        }
         return front ? (
-          <Tag key={i} className={cls} style={style}>
-            {/* search engines and screen readers get the full sentence, the eye gets the wordmark */}
-            {label && <span className="sr-only">{label}</span>}
-            <span aria-hidden={label ? true : undefined}>{text}</span>
-          </Tag>
+          <span key={i} aria-hidden className={cls} style={style}>
+            {text}
+          </span>
         ) : (
           <span key={i} aria-hidden className={cls} style={style}>
             {text}
@@ -140,37 +149,33 @@ export function Stage({ id, bg, glow, panel, title, avatar, avatarAlt, words, bo
 
         <div className="pointer-events-none absolute inset-0 z-[15] opacity-[0.08] mix-blend-overlay" style={{ backgroundImage: GRAIN }} />
 
+      </div>
+
+      {/* Words, text and buttons, in the page once. Phones: a dark panel under
+          the picture. From md: laid over the picture (words at face height,
+          text bottom-left, buttons bottom-right). */}
+      <div
+        className="space-y-7 bg-[var(--panel)] px-5 py-9 md:pointer-events-none md:absolute md:inset-x-0 md:top-0 md:z-20 md:h-svh md:min-h-[680px] md:space-y-0 md:bg-transparent md:p-0"
+        style={{ ['--panel' as string]: panel }}
+      >
         {words && (
-          <div className="pointer-events-none absolute inset-x-0 top-[47%] hidden justify-between px-[4vw] md:flex">
-            <div style={{ transform: 'translateX(calc(var(--p) * 100px))' }}>
+          <div className="flex justify-between md:absolute md:inset-x-0 md:top-[47%] md:px-[4vw]">
+            <div className="md:[transform:translateX(calc(var(--p)*100px))]">
               <WordColumn items={words.left} side="left" animate={animate} />
             </div>
-            <div style={{ transform: 'translateX(calc(var(--p) * -100px))' }}>
+            <div className="md:[transform:translateX(calc(var(--p)*-100px))]">
               <WordColumn items={words.right} side="right" animate={animate} />
             </div>
           </div>
         )}
-
-        <div className="absolute inset-x-0 bottom-0 z-20 hidden items-end justify-between gap-8 px-[4vw] pb-10 md:flex">
-          <div className={`${rise} max-w-[320px] text-[17px] leading-relaxed font-medium text-white`} style={{ animationDelay: '0.9s' }}>
+        <div className="space-y-7 md:pointer-events-auto md:absolute md:inset-x-0 md:bottom-0 md:flex md:items-end md:justify-between md:gap-8 md:space-y-0 md:px-[4vw] md:pb-10">
+          <div className={`${rise} text-[17px] leading-relaxed font-medium text-white md:max-w-[340px]`} style={{ animationDelay: '0.9s' }}>
             {bottomLeft}
           </div>
-          <div className={`${rise} flex shrink-0 flex-wrap justify-end gap-3`} style={{ animationDelay: '1s' }}>
+          <div className={`${rise} flex flex-col items-start gap-3 md:shrink-0 md:flex-row md:flex-wrap md:justify-end`} style={{ animationDelay: '1s' }}>
             {bottomRight}
           </div>
         </div>
-      </div>
-
-      {/* phones: everything under the picture */}
-      <div className="space-y-7 px-5 py-9 md:hidden" style={{ backgroundColor: panel }}>
-        {words && (
-          <div className="flex justify-between" aria-hidden>
-            <WordColumn items={words.left} side="left" animate={false} />
-            <WordColumn items={words.right} side="right" animate={false} />
-          </div>
-        )}
-        <div className="text-[17px] leading-relaxed font-medium text-white">{bottomLeft}</div>
-        <div className="flex flex-col items-start gap-3">{bottomRight}</div>
       </div>
     </section>
   )
