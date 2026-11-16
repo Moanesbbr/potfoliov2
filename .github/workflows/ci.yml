@@ -19,6 +19,11 @@
 #   secret   DISCORD_DEPLOY_WEBHOOK_URL  optional: a failed run is posted to #deploys
 # Without the two RELEASE_APP_* values the image is built but not released.
 #
+# The release key can change any production manifest in tunispare-deploy. It
+# belongs in the `production` environment (Settings → Environments), allowed
+# to the `main` branch only, not in the repository's secrets: a branch whose
+# workflow was edited could read a repository secret, never this one.
+#
 # Third-party actions are pinned to a full commit SHA (the version is in the
 # comment): a tag can be moved, a commit cannot.
 name: Portfolio
@@ -67,6 +72,10 @@ jobs:
           grep -q "Sitemap: $PUBLIC_SITE_URL/sitemap.xml" dist/robots.txt
           grep -q "<loc>$PUBLIC_SITE_URL/</loc>" dist/sitemap.xml
           test -s dist/llms.txt
+          grep -q '^Content-Signal: search=yes' dist/robots.txt
+          test -s dist/index.md
+          jq -e '.skills | length > 0' dist/.well-known/agent-skills/index.json > /dev/null
+          jq -e '.entries | length > 0' dist/.well-known/ai-catalog.json > /dev/null
 
   security:
     name: Security (secrets, code, Dockerfile, dependencies)
@@ -181,6 +190,23 @@ jobs:
           curl -fsS -D - -o /dev/null "http://127.0.0.1:8080$asset" | grep -qi 'cache-control: public, max-age=31536000, immutable'
           [ "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:8080/nothing-here)" = 404 ]
           [ "$(curl -s -o /dev/null -w '%{http_code}' -X POST http://127.0.0.1:8080/)" = 405 ]
+          # A refused request carries the security headers too.
+          curl -s -D - -o /dev/null -X POST http://127.0.0.1:8080/ | grep -qi '^content-security-policy:'
+          # For AI agents: browsers get HTML with a Link header, a request for
+          # markdown gets markdown, and the /.well-known/ files are served as
+          # JSON to any origin, the skill matching its published digest.
+          grep -qi '^content-type: text/html' headers.txt
+          grep -qi '^link: .*rel="describedby"' headers.txt
+          curl -fsS -D md-headers.txt -o page.md -H 'Accept: text/markdown' http://127.0.0.1:8080/
+          grep -qi '^content-type: text/markdown' md-headers.txt
+          grep -q '^# Moanes Ben Brahim' page.md
+          curl -fsS -D wk-headers.txt -o /dev/null http://127.0.0.1:8080/.well-known/ai-catalog.json
+          grep -qi '^content-type: application/json' wk-headers.txt
+          grep -qi '^access-control-allow-origin: \*' wk-headers.txt
+          skill=$(curl -fsS http://127.0.0.1:8080/.well-known/agent-skills/index.json | jq -r '.skills[0]')
+          want=$(jq -r '.digest | sub("^sha256:"; "")' <<< "$skill")
+          got=$(curl -fsS "http://127.0.0.1:8080$(jq -r '.url' <<< "$skill" | sed 's|^https\?://[^/]*||')" | sha256sum | cut -d' ' -f1)
+          [ "$want" = "$got" ]
           docker rm -f try > /dev/null
 
       - name: Install Trivy
@@ -232,6 +258,8 @@ jobs:
     # starts tunispare-deploy's deploy workflow. Main only.
     needs: image
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    # Its secrets are given to main only (see the header).
+    environment: production
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:

@@ -34,6 +34,21 @@ npm run preview    # serve dist/ locally
   (`Person`, `ProfilePage`, `WebSite`, Tunispare as `Organization`, both avatars as `ImageObject`).
 - Generated into `dist/` from `VITE_SITE_URL`: `robots.txt` (search and AI crawlers allowed),
   `sitemap.xml` (with the images), `llms.txt` (facts in plain markdown, from `scripts/llms.template.md`).
+- For AI agents (checked with isitagentready.com, each one tested by the image's CI step):
+  - `robots.txt` carries Content Signals in every group: `search=yes, ai-input=yes, ai-train=yes`
+    (the site exists to be found; change the line in `scripts/prerender.mjs` to refuse training);
+  - markdown negotiation: `/` asked with `Accept: text/markdown` returns `index.md` (the same
+    text as `llms.txt`) as `text/markdown`; browsers still get the HTML (`Vary: Accept`);
+  - a `Link` header on `/` (RFC 8288) pointing to the markdown, `llms.txt`, the skills index,
+    the AI catalog and the sitemap;
+  - `/.well-known/agent-skills/index.json`: one skill (`scripts/skill.template.md`), with the
+    SHA-256 of the published file; `/.well-known/ai-catalog.json`: the facts and the skill, with
+    sample questions. Both served as JSON to any origin (CORS `*`: public facts);
+  - WebMCP (`src/webmcp.ts`): read-only tools for an agent in the browser — `get_profile`,
+    `list_products`, `show_section`. Registered only when the browser offers the API.
+  - Not done, on purpose: the API catalog, OAuth/OIDC metadata, `auth.md` and an MCP server
+    card describe an API and a login, which this site doesn't have; DNS-AID is a draft that
+    needs records and DNSSEC at the DNS host.
 - **Change `VITE_SITE_URL` in `.env` when the domain is decided, then rebuild.**
 - After going live: add the site to Google Search Console and Bing Webmaster Tools and
   submit `sitemap.xml`; put the site URL on the GitHub and LinkedIn profiles.
@@ -73,3 +88,5 @@ python -I scripts/favicons.py         # favicon set from the avatar head
 - `.github/workflows/ci.yml`: check → security → image → release, the same shape as the
   Tunispare apps.
 - `deploy/README.md`: the one-time steps to put it on the VPS (k3s) and how it deploys after that.
+  On the cluster the pod is fenced off by a NetworkPolicy (Traefik in, nothing out), and the
+  release key is an environment secret that only `main` can use.

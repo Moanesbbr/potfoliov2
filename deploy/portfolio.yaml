@@ -4,7 +4,8 @@
 # In the `tunispare` namespace so it reuses the existing middlewares and the
 # deploy workflow's health wait. It talks to nothing: no database, no API,
 # no secret. The image is public on GHCR (nothing in it is private), so it
-# needs no pull secret.
+# needs no pull secret. The NetworkPolicy at the end enforces « talks to
+# nothing ».
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -69,3 +70,26 @@ spec:
     - name: http
       port: 8080
       targetPort: http
+---
+# The portfolio is the only pod in this namespace that isn't Tunispare: MySQL
+# and the AI reader trust the whole `tunispare` namespace, so it is fenced
+# off on its own. It answers Traefik (namespace kube-system) on its port and
+# opens no connection at all (nginx serves files: no DNS, no database, no
+# API). The kubelet's health probes come from the node and are not affected.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: portfolio-isolated
+  namespace: tunispare
+spec:
+  podSelector:
+    matchLabels: { app: portfolio }
+  policyTypes: [Ingress, Egress]
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+      ports:
+        - port: 8080
+  egress: []

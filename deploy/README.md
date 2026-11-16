@@ -32,14 +32,26 @@ cluster then pulls the image without a credential.
 
 ### 3. Give this repository the release credentials
 
-Settings → Secrets and variables → Actions, the same values as in the
-Tunispare app repositories:
+The release key can change any production manifest in tunispare-deploy, so
+only `main` may use it:
+
+1. Settings → Branches: protect `main` (no force push, no deletion).
+2. Settings → Environments → **New environment** `production` →
+   Deployment branches and tags: **Selected branches** → add `main`.
+3. In that environment (not in the repository's secrets), the same values as
+   in the Tunispare app repositories:
 
 | Kind | Name |
 |---|---|
-| Variable | `RELEASE_APP_CLIENT_ID` |
-| Secret | `RELEASE_APP_PRIVATE_KEY` |
-| Secret (optional) | `DISCORD_DEPLOY_WEBHOOK_URL` |
+| Environment variable | `RELEASE_APP_CLIENT_ID` |
+| Environment secret | `RELEASE_APP_PRIVATE_KEY` |
+
+4. Delete `RELEASE_APP_PRIVATE_KEY` (and the variable) from Settings →
+   Secrets and variables → Actions if they were put there first: a
+   repository secret can be read by a workflow edited on any branch.
+
+`DISCORD_DEPLOY_WEBHOOK_URL` (optional) stays a repository secret: the failure
+notice runs on every branch.
 
 ### 4. Add the portfolio to tunispare-deploy (one commit)
 
@@ -65,7 +77,21 @@ In `tunispare-deploy`:
    apps=(tunispare/backend tunispare/website tunispare/backoffice tunispare/portfolio)
    ```
 4. Append `deploy/ingress-portfolio.yaml` to `k3s/ingress/ingress.yaml` (after a `---` line).
-5. Commit and push: the Deploy workflow starts the pod.
+5. In `k3s/monitoring/config/prometheus.yml`, job `probe-public`, add
+   `https://moanesbbr.tunispare.com/` to the targets: the `SiteDown` alert
+   and the certificate-expiry alerts then cover it.
+6. Commit and push: the Deploy workflow starts the pod.
+
+`portfolio.yaml` ends with a NetworkPolicy, `portfolio-isolated`: MySQL and
+the AI reader trust every pod of the `tunispare` namespace, so the portfolio
+is fenced off. It accepts Traefik only (namespace `kube-system`, port 8080)
+and opens no connection. Check it once deployed: the site answers, and from
+inside the pod nothing does:
+
+```bash
+curl -sI https://moanesbbr.tunispare.com | head -1                       # HTTP/1.1 200 OK
+sudo k3s kubectl -n tunispare exec deploy/portfolio --   wget -q -T 3 -O /dev/null http://backend:3001/health; echo $?          # not 0: blocked
+```
 
 ### 5. DNS and certificate
 

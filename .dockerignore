@@ -7,4 +7,5 @@ assets-src
 deploy
 *.md
 !scripts/llms.template.md
+!scripts/skill.template.md
 raw
