@@ -74,9 +74,12 @@ python -I scripts/favicons.py         # favicon set from the avatar head
 | `raw/prompts/` | the prompts used while designing |
 
 - `public/og.jpg` is the 1200×630 share image (rendered from a small HTML page).
-- `public/video/`: the Tunispare demo film re-encoded for the web from
-  `presentation/demo/film/out` (720p full film, 25 s silent teaser, poster) with the
-  ffmpeg that ships with Remotion.
+- `public/video/`, re-encoded for the web from `presentation/demo/film/out` with the ffmpeg
+  that ships with Remotion:
+  - `tunispare-in-one-minute.mp4`: the narrated, subtitled one-minute tour (the LinkedIn
+    teaser, `node teaser/build.mjs` there), 720×720, plus its poster. It plays muted in the
+    page; « Sound on » starts it again with the voice;
+  - `tunispare-demo.mp4`: the full demo film (720p), in the « Watch the demo » dialog, and its poster.
 - The moaneslife screens (`public/img/life-*.webp`) were captured from the live app;
   only screens without personal figures are used.
 

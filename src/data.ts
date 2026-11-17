@@ -46,7 +46,8 @@ export type Product = {
   url?: string
   urlLabel?: string
   note?: string
-  video?: { teaser: string; full: string; poster: string; length: string }
+  /** teaser: the one-minute narrated tour (square, subtitled), played in the page; full: the demo film, in a dialog */
+  video?: { teaser: string; teaserPoster: string; full: string; poster: string; length: string }
   theme: Theme
   phone?: boolean
   shots: Shot[]
@@ -75,7 +76,7 @@ export const products: Product[] = [
     url: 'https://tunispare.com',
     urlLabel: 'tunispare.com',
     theme: 'navy',
-    video: { teaser: '/video/tunispare-teaser.mp4', full: '/video/tunispare-demo.mp4', poster: '/video/tunispare-poster.jpg', length: '6 min' },
+    video: { teaser: '/video/tunispare-in-one-minute.mp4', teaserPoster: '/video/tunispare-in-one-minute-poster.jpg', full: '/video/tunispare-demo.mp4', poster: '/video/tunispare-poster.jpg', length: '6 min' },
     shots: [
       { src: '/img/tunispare-home.webp', alt: 'Tunispare home page: compatible phone and PC spare parts from Tunisian suppliers' },
       { src: '/img/tunispare-search.webp', alt: 'Tunispare search: offers from nearby suppliers for a Galaxy A52 screen' },

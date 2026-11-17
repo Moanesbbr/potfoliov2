@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
-import { ArrowRight, ArrowUpRight, Play, X } from 'lucide-react'
+import { ArrowRight, ArrowUpRight, Play, Volume2, VolumeX, X } from 'lucide-react'
 import { channels, help, lab, products, profile, stack, stats, tracks, workedWith, type LabStatus, type Product, type Theme } from '../data'
 
 /* ---------- helpers ---------- */
@@ -95,29 +95,22 @@ function Screens({ p, t }: { p: Product; t: (typeof THEMES)[Theme] }) {
       <div className={`relative overflow-hidden rounded-2xl border ${t.frame}`}>
         {showVideo && p.video ? (
           <>
-            <video
-              src={p.video.teaser}
-              poster={p.video.poster}
-              autoPlay
-              muted
-              loop
-              playsInline
-              preload="metadata"
-              aria-label={`${p.name} demo film, short silent extract`}
-              className="aspect-video w-full bg-navy-deep object-cover"
-            />
-            <button
-              type="button"
-              onClick={() => setOpen(true)}
-              className="absolute bottom-3 left-3 inline-flex items-center gap-2 rounded-full bg-mint px-4 py-2 text-[14px] font-bold text-navy shadow-lg transition-transform hover:scale-[1.04]"
-            >
-              <Play size={15} fill="currentColor" /> Watch the demo · {p.video.length}
-            </button>
+            <Teaser src={p.video.teaser} poster={p.video.teaserPoster} label={`${p.name} in one minute: a narrated tour, with subtitles`} />
           </>
         ) : (
           <img src={current.src} alt={current.alt} width={1600} height={1000} loading="lazy" className="aspect-[16/10] w-full bg-white object-cover object-top" />
         )}
       </div>
+      {/* Below the picture, not on it: the tour's subtitles run along its bottom edge. */}
+      {showVideo && p.video && (
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          className="mt-3 inline-flex items-center gap-2 rounded-full bg-mint px-4 py-2 text-[14px] font-bold text-navy shadow-lg transition-transform hover:scale-[1.04]"
+        >
+          <Play size={15} fill="currentColor" /> Watch the full demo · {p.video.length}
+        </button>
+      )}
       {open && p.video && <VideoDialog src={p.video.full} poster={p.video.poster} title={`${p.name} demo film`} onClose={() => setOpen(false)} />}
       {p.shots.length > 1 && (
         <div className={`mt-3 grid gap-2.5 ${p.video ? 'grid-cols-5' : 'grid-cols-4'}`}>
@@ -128,7 +121,7 @@ function Screens({ p, t }: { p: Product; t: (typeof THEMES)[Theme] }) {
               aria-label="Show the demo film"
               className={`relative overflow-hidden rounded-lg border-2 bg-navy-deep transition ${shot === -1 ? 'border-current' : 'border-transparent opacity-60 hover:opacity-100'} ${t.text}`}
             >
-              <img src={p.video.poster} alt={`${p.name} demo film, opening frame`} loading="lazy" className="aspect-[16/10] w-full object-cover" />
+              <img src={p.video.teaserPoster} alt={`${p.name} in one minute, opening frame`} loading="lazy" className="aspect-[16/10] w-full object-cover" />
               <span className="absolute inset-0 flex items-center justify-center bg-black/35 text-white">
                 <Play size={18} fill="currentColor" />
               </span>
@@ -148,6 +141,48 @@ function Screens({ p, t }: { p: Product; t: (typeof THEMES)[Theme] }) {
         </div>
       )}
     </div>
+  )
+}
+
+/** The one-minute tour: square, subtitled, playing muted like any autoplay; one tap turns the
+ *  voice on and starts it again from the beginning. Shown whole, in a square frame, so the
+ *  subtitles stay readable. */
+function Teaser({ src, poster, label }: { src: string; poster: string; label: string }) {
+  const video = useRef<HTMLVideoElement>(null)
+  const [muted, setMuted] = useState(true)
+  const toggle = () => {
+    const v = video.current
+    if (!v) return
+    if (muted) {
+      v.currentTime = 0
+      v.muted = false
+      void v.play()
+    } else v.muted = true
+    setMuted(!muted)
+  }
+  return (
+    <>
+      <video
+        ref={video}
+        src={src}
+        poster={poster}
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="metadata"
+        aria-label={label}
+        className="aspect-square w-full bg-[#eef1fb] object-contain"
+      />
+      <button
+        type="button"
+        onClick={toggle}
+        aria-pressed={!muted}
+        className="absolute top-3 right-3 inline-flex items-center gap-2 rounded-full bg-navy/85 px-3.5 py-2 text-[13px] font-bold text-white shadow-lg backdrop-blur transition-transform hover:scale-[1.04]"
+      >
+        {muted ? <VolumeX size={15} /> : <Volume2 size={15} />} {muted ? 'Sound on' : 'Mute'}
+      </button>
+    </>
   )
 }
 
